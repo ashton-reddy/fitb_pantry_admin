@@ -1,6 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:fitbadmin/main.dart';
 import 'package:fitbadmin/pages/completed_oreders_page/completed_orders_page.dart';
 import 'package:fitbadmin/pages/orders_page/orders_page_store.dart';
+import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fitbadmin/routing/app_router.dart';
@@ -24,7 +27,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return authenticated ? Scaffold(
       body: Observer(builder: (context) {
         if (pageStore.isLoading) {
           return const Center(
@@ -86,6 +89,90 @@ class _OrdersPageState extends State<OrdersPage> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 16,
+              ),
+              DropdownButton<String>(
+                value: pageStore.selectedSchool,
+                icon: const Icon(Icons.arrow_downward, color: Colors.black,),
+                elevation: 16,
+                style: const TextStyle(color: Color(0xffAD0075)),
+                underline: Container(
+                  height: 2,
+                  color: const Color(0xffAD0075),
+                ),
+                onChanged: (String? value) {
+                  pageStore.onSchoolChanged(value ?? pageStore.selectedSchool);
+                },
+                items: pageStore.schools.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              isActiveSelected ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: GestureDetector(
+                  onTap: () {
+                    pageStore.makePdf();
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Download school orders',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffAD0075),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Icon(
+                        Icons.download,
+                        color: Color(0xffAD0075),
+                      ),
+                    ],
+                  ),
+                ),
+              ) : const SizedBox(),
+              const SizedBox(
+                height: 16,
+              ),
+              isActiveSelected ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: GestureDetector(
+                  onTap: () async {
+                    if (await confirm(
+                      context,
+                      title: const Text('Confirm'),
+                      content:
+                      const Text('Would you like to remove?'),
+                      textOK: const Text('Yes'),
+                      textCancel: const Text('No'),
+                    )) {
+                      pageStore.completeOrders();
+                    }
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Complete all orders',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffAD0075),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ) : const SizedBox(),
               Observer(builder: (context) {
                 if (pageStore.isLoading) {
                   return const Center(
@@ -172,6 +259,6 @@ class _OrdersPageState extends State<OrdersPage> {
           ),
         );
       }),
-    );
+    ) : NotPermitted();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:fitbadmin/pages/sign_in_page/sign_in_page.dart';
 import 'package:fitbadmin/pages/home_page/home_page.dart';
 import 'package:fitbadmin/pages/items_page/items_page.dart';
 import 'package:fitbadmin/pages/categories_page/categories_page.dart';
@@ -17,8 +18,11 @@ class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(
-      page: HomeRoute.page,
+      page: SignInRoute.page,
       initial: true,
+    ),
+    AutoRoute(
+      page: HomeRoute.page,
     ),
     AutoRoute(
       page: AddItemRoute.page,

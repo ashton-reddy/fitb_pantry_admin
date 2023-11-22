@@ -3,9 +3,12 @@ import 'package:fitbadmin/pages/add_category_page/add_category_page_store.dart';
 import 'package:fitbadmin/pages/add_item_page/add_item_page_store.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:fitbadmin/widgets/logo_header.dart';
+import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../../main.dart';
 
 @RoutePage()
 class AddCategoryPage extends StatefulWidget {
@@ -32,7 +35,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return authenticated ? Scaffold(
       body: Observer(builder: (context) {
         if (pageStore.isLoading) {
           return const Center(
@@ -142,6 +145,6 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
           ),
         );
       }),
-    );
+    ) : NotPermitted();
   }
 }

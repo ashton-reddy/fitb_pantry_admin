@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:fitbadmin/main.dart';
 import 'package:fitbadmin/pages/completed_oreders_page/completed_orders_page_store.dart';
 import 'package:fitbadmin/pages/orders_page/orders_page_store.dart';
+import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fitbadmin/routing/app_router.dart';
@@ -23,7 +25,7 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return authenticated ? Scaffold(
       body: Observer(builder: (context) {
         if (pageStore.isLoading) {
           return const Center(
@@ -95,6 +97,6 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
           ),
         );
       }),
-    );
+    ) : NotPermitted();
   }
 }

@@ -41,6 +41,38 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     });
   }
 
+  late final _$schoolsAtom =
+      Atom(name: '_OrdersPageStore.schools', context: context);
+
+  @override
+  ObservableList<String> get schools {
+    _$schoolsAtom.reportRead();
+    return super.schools;
+  }
+
+  @override
+  set schools(ObservableList<String> value) {
+    _$schoolsAtom.reportWrite(value, super.schools, () {
+      super.schools = value;
+    });
+  }
+
+  late final _$selectedSchoolAtom =
+      Atom(name: '_OrdersPageStore.selectedSchool', context: context);
+
+  @override
+  String get selectedSchool {
+    _$selectedSchoolAtom.reportRead();
+    return super.selectedSchool;
+  }
+
+  @override
+  set selectedSchool(String value) {
+    _$selectedSchoolAtom.reportWrite(value, super.selectedSchool, () {
+      super.selectedSchool = value;
+    });
+  }
+
   late final _$loadPageAsyncAction =
       AsyncAction('_OrdersPageStore.loadPage', context: context);
 
@@ -49,11 +81,22 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     return _$loadPageAsyncAction.run(() => super.loadPage());
   }
 
+  late final _$onSchoolChangedAsyncAction =
+      AsyncAction('_OrdersPageStore.onSchoolChanged', context: context);
+
+  @override
+  Future<void> onSchoolChanged(String newSchool) {
+    return _$onSchoolChangedAsyncAction
+        .run(() => super.onSchoolChanged(newSchool));
+  }
+
   @override
   String toString() {
     return '''
 isLoading: ${isLoading},
-ordersList: ${ordersList}
+ordersList: ${ordersList},
+schools: ${schools},
+selectedSchool: ${selectedSchool}
     ''';
   }
 }

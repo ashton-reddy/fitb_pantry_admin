@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:fitbadmin/main.dart';
 import 'package:fitbadmin/pages/add_category_page/add_category_page_store.dart';
 import 'package:fitbadmin/pages/add_item_page/add_item_page_store.dart';
 import 'package:fitbadmin/pages/add_school_page/add_school_page_store.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:fitbadmin/widgets/logo_header.dart';
+import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -34,7 +36,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return authenticated ? Scaffold(
       body: Observer(builder: (context) {
         if (pageStore.isLoading) {
           return const Center(
@@ -158,6 +160,6 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
           ),
         );
       }),
-    );
+    ) : NotPermitted();
   }
 }

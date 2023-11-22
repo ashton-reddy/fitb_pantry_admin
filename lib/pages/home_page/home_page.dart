@@ -1,11 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:fitbadmin/pages/categories_page/categories_page.dart';
-import 'package:fitbadmin/pages/completed_oreders_page/completed_orders_page.dart';
-import 'package:fitbadmin/pages/items_page/items_page.dart';
+import 'package:fitbadmin/main.dart';
 import 'package:fitbadmin/pages/orders_page/orders_page.dart';
-import 'package:fitbadmin/pages/schools_page/schools_page.dart';
 import 'package:fitbadmin/pages/settings_page/settings_page.dart';
 import 'package:fitbadmin/pages/students_page/students_page.dart';
+import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:vertical_tabs_flutter/vertical_tabs.dart';
 
@@ -25,7 +23,6 @@ class _HomePageState extends State<HomePage> {
   final List<String> titles = [
     'Orders',
     'Students',
-    'Reports',
     'Settings',
   ];
 
@@ -45,7 +42,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return authenticated ? DefaultTabController(
       length: 4,
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -77,12 +74,10 @@ class _HomePageState extends State<HomePage> {
                     tab(titles[0], icons[0], 0),
                     tab(titles[1], icons[1], 1),
                     tab(titles[2], icons[2], 2),
-                    tab(titles[3], icons[3], 3),
                   ],
                   contents: const <Widget>[
                     OrdersPage(),
                     StudentsPage(),
-                    SizedBox(),
                     SettingsPage(),
                   ],
                 ),
@@ -91,7 +86,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
+    ) : const NotPermitted();
   }
 
   Tab tab(title, icon, index) {

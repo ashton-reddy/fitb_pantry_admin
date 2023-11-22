@@ -49,6 +49,9 @@ dependencies:
   json_annotation:
   confirm_dialog: ^1.0.2
   web_hover_menu: ^0.0.3
+  pdf: ^3.10.4
+  file_saver: ^0.2.9
+  printing: ^5.11.1
 
 dev_dependencies:
   flutter_test:
@@ -95,10 +98,12 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

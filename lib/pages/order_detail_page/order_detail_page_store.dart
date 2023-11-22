@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:fitbadmin/models/item_model/item_model.dart';
 import 'package:fitbadmin/models/order_model/order_model.dart';
-import 'package:fitbadmin/models/school_model/school_model.dart';
 import 'package:fitbadmin/models/student_model/student_model.dart';
+import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
 import 'package:injectable/injectable.dart';
+import 'package:pdf/widgets.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 part 'order_detail_page_store.g.dart';
 
@@ -81,5 +84,88 @@ abstract class _OrderDetailPageStore with Store {
     }
 
     isLoading = false;
+  }
+
+  Future<void> makePdf() async {
+    //isLoading = true;
+    var myTheme = pw.ThemeData.withFont(
+      base: Font.ttf(await rootBundle.load("assets/fonts/OpenSans-Regular.ttf")),
+    );
+    final pdf = pw.Document(
+      theme: myTheme,
+    );
+    final imageLogo = pw.MemoryImage((await rootBundle.load('assets/logo.png')).buffer.asUint8List());
+    pdf.addPage(
+      pw.Page(build: (context) {
+        return pw.Center(
+          child: pw.Column(
+              children: [
+                pw.Container(
+                  padding: const pw.EdgeInsets.all(16.0),
+                  child: pw.Image(
+                    imageLogo,
+                    fit: pw.BoxFit.contain,
+                    height: 50,
+                  ),
+                ),
+                pw.Text(
+                  '${studentModel!.firstName} ${studentModel!.lastName}',
+                  textAlign: TextAlign.center,
+                  style: const pw.TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                pw.Text(
+                  'email: ${studentModel!.email}',
+                  textAlign: TextAlign.center,
+                  style: const pw.TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                pw.Text(
+                  'phone number: ${studentModel!.phoneNumber}',
+                  textAlign: TextAlign.center,
+                  style: const pw.TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                pw.Text(
+                  'school: ${studentModel!.school}',
+                  textAlign: TextAlign.center,
+                  style: const pw.TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                pw.SizedBox(
+                  height: 32
+                ),
+                pw.Text(
+                  'Items: ',
+                  textAlign: TextAlign.left,
+                  style: const pw.TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                pw.SizedBox(
+                    height: 16
+                ),
+                for(var item in itemsList)
+                  pw.Text(
+                    '${item.id} - ${orderModel.items.firstWhere((element) => element.itemId == item.id).quantity}',
+                    textAlign: TextAlign.left,
+                    style: const pw.TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+              ]
+          ),
+        );
+      }),
+    );
+
+    var bytes = await pdf.save();
+    await FileSaver.instance.saveFile(
+      bytes: bytes, name: 'order.pdf',
+    );
   }
 }
