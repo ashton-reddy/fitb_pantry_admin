@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "fitb-food-pantry"
-  }
+  },
+  "targets": {
+    "fitb-food-pantry": {
+      "hosting": {
+        "fitbadmin": [
+          "fitbadmin"
+        ],
+        "fitb-food-pantry": [
+          "fitb-food-pantry"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
