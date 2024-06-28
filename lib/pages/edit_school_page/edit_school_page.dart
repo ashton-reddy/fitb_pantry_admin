@@ -1,25 +1,39 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:fitbadmin/main.dart';
-import 'package:fitbadmin/pages/add_category_page/add_category_page_store.dart';
-import 'package:fitbadmin/pages/add_item_page/add_item_page_store.dart';
 import 'package:fitbadmin/pages/add_school_page/add_school_page_store.dart';
+import 'package:fitbadmin/pages/edit_school_page/edit_school_page_store.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:fitbadmin/widgets/logo_header.dart';
 import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fitbadmin/models/school_model/school_model.dart';
 
 @RoutePage()
-class AddSchoolPage extends StatefulWidget {
-  const AddSchoolPage({Key? key}) : super(key: key);
+class EditSchoolPage extends StatefulWidget {
+  final SchoolModel school;
+
+  const EditSchoolPage({Key? key, required this.school}) : super(key: key);
 
   @override
-  State<AddSchoolPage> createState() => _AddSchoolPageState();
+  State<EditSchoolPage> createState() => _EditSchoolPageState();
 }
 
-class _AddSchoolPageState extends State<AddSchoolPage> {
-  final AddSchoolPageStore pageStore = AddSchoolPageStore();
+class _EditSchoolPageState extends State<EditSchoolPage> {
+  late EditSchoolPageStore pageStore;
+
+  @override
+  void initState() {
+    super.initState();
+    pageStore = EditSchoolPageStore(widget.school, AddSchoolPageStore());
+    pageStore.loadPage();
+
+    nameController.text = widget.school.name ?? '';
+    openDateController.text = widget.school.openDate.toString();
+    closeDateController.text = widget.school.closeDate.toString();
+    emailController.text = widget.school.email ?? '';
+  }
 
   final TextEditingController nameController = TextEditingController();
 
@@ -29,12 +43,6 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
   final TextEditingController emailController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    pageStore.loadPage();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +71,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                           child: Column(
                             children: [
                               const Text(
-                                'Add School',
+                                'Edit School',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
@@ -79,7 +87,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'name',
+                                  hintText: 'Name',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -93,7 +101,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'open Date',
+                                  hintText: 'Open Date',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -110,7 +118,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'close Date',
+                                  hintText: 'Close Date',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -127,7 +135,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'email',
+                                  hintText: 'Email',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -165,7 +173,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      'Add School',
+                                      'Done',
                                       style: TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.w700,

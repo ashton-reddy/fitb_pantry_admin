@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_school_page_store.dart';
+part of 'edit_school_page_store.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,9 +8,9 @@ part of 'add_school_page_store.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$AddSchoolPageStore on _AddSchoolPageStore, Store {
+mixin _$EditSchoolPageStore on _EditSchoolPageStore, Store {
   late final _$isLoadingAtom =
-      Atom(name: '_AddSchoolPageStore.isLoading', context: context);
+      Atom(name: '_EditSchoolPageStore.isLoading', context: context);
 
   @override
   bool get isLoading {
@@ -26,7 +26,7 @@ mixin _$AddSchoolPageStore on _AddSchoolPageStore, Store {
   }
 
   late final _$loadPageAsyncAction =
-      AsyncAction('_AddSchoolPageStore.loadPage', context: context);
+      AsyncAction('_EditSchoolPageStore.loadPage', context: context);
 
   @override
   Future<void> loadPage() {
@@ -34,7 +34,7 @@ mixin _$AddSchoolPageStore on _AddSchoolPageStore, Store {
   }
 
   late final _$saveSchoolsAsyncAction =
-      AsyncAction('_AddSchoolPageStore.saveSchools', context: context);
+      AsyncAction('_EditSchoolPageStore.saveSchools', context: context);
 
   @override
   Future<void> saveSchools(

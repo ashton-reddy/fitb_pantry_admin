@@ -39,6 +39,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const CategoriesPage(),
       );
     },
+    EditSchoolRoute.name: (routeData) {
+      final args = routeData.argsAs<EditSchoolRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EditSchoolPage(
+          key: args.key,
+          school: args.school,
+        ),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -131,6 +141,44 @@ class CategoriesRoute extends PageRouteInfo<void> {
   static const String name = 'CategoriesRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EditSchoolPage]
+class EditSchoolRoute extends PageRouteInfo<EditSchoolRouteArgs> {
+  EditSchoolRoute({
+    Key? key,
+    required SchoolModel school,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditSchoolRoute.name,
+          args: EditSchoolRouteArgs(
+            key: key,
+            school: school,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditSchoolRoute';
+
+  static const PageInfo<EditSchoolRouteArgs> page =
+      PageInfo<EditSchoolRouteArgs>(name);
+}
+
+class EditSchoolRouteArgs {
+  const EditSchoolRouteArgs({
+    this.key,
+    required this.school,
+  });
+
+  final Key? key;
+
+  final SchoolModel school;
+
+  @override
+  String toString() {
+    return 'EditSchoolRouteArgs{key: $key, school: $school}';
+  }
 }
 
 /// generated route for

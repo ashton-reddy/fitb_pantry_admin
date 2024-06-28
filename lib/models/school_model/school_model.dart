@@ -16,12 +16,15 @@ class SchoolModel {
   @JsonKey(name: 'open date')
   int openDate;
 
-  SchoolModel({
-    required this.closeDate,
-    required this.isActive,
-    required this.name,
-    required this.openDate,
-  });
+  @JsonKey()
+  String email;
+
+  SchoolModel(
+      {required this.closeDate,
+      required this.isActive,
+      required this.name,
+      required this.openDate,
+      required this.email});
 
   factory SchoolModel.fromJson(Map<String, dynamic> json) {
     return _$SchoolModelFromJson(json);

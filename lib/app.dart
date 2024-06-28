@@ -1,8 +1,8 @@
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
-class App extends StatelessWidget {
-  App({super.key});
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
 
   final _router = AppRouter();
 

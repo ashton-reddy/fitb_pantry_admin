@@ -9,7 +9,9 @@ import 'package:fitbadmin/pages/add_category_page/add_category_page.dart';
 import 'package:fitbadmin/pages/order_detail_page/order_detail_page.dart';
 import 'package:fitbadmin/pages/add_school_page/add_school_page.dart';
 import 'package:fitbadmin/models/order_model/order_model.dart';
+import 'package:fitbadmin/pages/edit_school_page/edit_school_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fitbadmin/models/school_model/school_model.dart';
 
 part 'app_router.gr.dart';
 
@@ -17,33 +19,34 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(
-      page: SignInRoute.page,
-      initial: true,
-    ),
-    AutoRoute(
-      page: HomeRoute.page,
-    ),
-    AutoRoute(
-      page: AddItemRoute.page,
-    ),
-    AutoRoute(
-      page: ItemsRoute.page,
-    ),
-    AutoRoute(
-      page: CategoriesRoute.page,
-    ),
-    AutoRoute(
-      page: SchoolsRoute.page,
-    ),
-    AutoRoute(
-      page: OrderDetailRoute.page,
-    ),
-    AutoRoute(
-      page: AddCategoryRoute.page,
-    ),
-    AutoRoute(
-      page: AddSchoolRoute.page,
-    ),
-  ];
+        AutoRoute(
+          page: SignInRoute.page,
+          initial: true,
+        ),
+        AutoRoute(
+          page: HomeRoute.page,
+        ),
+        AutoRoute(
+          page: AddItemRoute.page,
+        ),
+        AutoRoute(
+          page: ItemsRoute.page,
+        ),
+        AutoRoute(
+          page: CategoriesRoute.page,
+        ),
+        AutoRoute(
+          page: SchoolsRoute.page,
+        ),
+        AutoRoute(
+          page: OrderDetailRoute.page,
+        ),
+        AutoRoute(
+          page: AddCategoryRoute.page,
+        ),
+        AutoRoute(
+          page: AddSchoolRoute.page,
+        ),
+        AutoRoute(page: EditSchoolRoute.page)
+      ];
 }

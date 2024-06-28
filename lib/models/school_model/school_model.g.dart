@@ -7,10 +7,11 @@ part of 'school_model.dart';
 // **************************************************************************
 
 SchoolModel _$SchoolModelFromJson(Map<String, dynamic> json) => SchoolModel(
-      closeDate: json['close date'] as int,
+      closeDate: (json['close date'] as num).toInt(),
       isActive: json['is active'] as bool,
       name: json['name'] as String,
-      openDate: json['open date'] as int,
+      openDate: (json['open date'] as num).toInt(),
+      email: json['email'] as String,
     );
 
 Map<String, dynamic> _$SchoolModelToJson(SchoolModel instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$SchoolModelToJson(SchoolModel instance) =>
       'is active': instance.isActive,
       'name': instance.name,
       'open date': instance.openDate,
+      'email': instance.email,
     };

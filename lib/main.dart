@@ -12,5 +12,5 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initDi();
-  runApp(App());
+  runApp(MyApp());
 }

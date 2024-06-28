@@ -81,6 +81,22 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     return _$loadPageAsyncAction.run(() => super.loadPage());
   }
 
+  late final _$reloadPageAsyncAction =
+      AsyncAction('_OrdersPageStore.reloadPage', context: context);
+
+  @override
+  Future reloadPage() {
+    return _$reloadPageAsyncAction.run(() => super.reloadPage());
+  }
+
+  late final _$completeOrdersAsyncAction =
+      AsyncAction('_OrdersPageStore.completeOrders', context: context);
+
+  @override
+  Future completeOrders() {
+    return _$completeOrdersAsyncAction.run(() => super.completeOrders());
+  }
+
   late final _$onSchoolChangedAsyncAction =
       AsyncAction('_OrdersPageStore.onSchoolChanged', context: context);
 

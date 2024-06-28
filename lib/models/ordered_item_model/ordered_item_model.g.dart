@@ -9,7 +9,7 @@ part of 'ordered_item_model.dart';
 OrderedItemModel _$OrderedItemModelFromJson(Map<String, dynamic> json) =>
     OrderedItemModel(
       itemId: json['itemId'] as String,
-      quantity: json['quantity'] as int,
+      quantity: (json['quantity'] as num).toInt(),
     );
 
 Map<String, dynamic> _$OrderedItemModelToJson(OrderedItemModel instance) =>
