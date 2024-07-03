@@ -42,51 +42,53 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return authenticated ? DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _appBar(),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: VerticalTabs(
-                  tabBackgroundColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  //tabsElevation: 10,
-                  //tabsShadowColor: Colors.grey.shade500,
-                  tabsWidth: 200,
-                  indicatorColor: Colors.white,
-                  selectedTabBackgroundColor: Colors.white,
-                  indicatorWidth: 5,
-                  disabledChangePageFromContentView: true,
-                  initialIndex: _pageIndex,
-                  onSelect: (index) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        _pageIndex = index;
-                      });
-                    });
-                  },
-                  tabs: <Tab>[
-                    tab(titles[0], icons[0], 0),
-                    tab(titles[1], icons[1], 1),
-                    tab(titles[2], icons[2], 2),
-                  ],
-                  contents: const <Widget>[
-                    OrdersPage(),
-                    StudentsPage(),
-                    SettingsPage(),
-                  ],
-                ),
+    return authenticated
+        ? DefaultTabController(
+            length: 4,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: _appBar(),
+              body: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: Colors.white,
+                      child: VerticalTabs(
+                        tabBackgroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        //tabsElevation: 10,
+                        //tabsShadowColor: Colors.grey.shade500,
+                        tabsWidth: 200,
+                        indicatorColor: Colors.white,
+                        selectedTabBackgroundColor: Colors.white,
+                        indicatorWidth: 5,
+                        disabledChangePageFromContentView: true,
+                        initialIndex: _pageIndex,
+                        onSelect: (index) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            setState(() {
+                              _pageIndex = index;
+                            });
+                          });
+                        },
+                        tabs: <Tab>[
+                          tab(titles[0], icons[0], 0),
+                          tab(titles[1], icons[1], 1),
+                          tab(titles[2], icons[2], 2),
+                        ],
+                        contents: const <Widget>[
+                          OrdersPage(),
+                          StudentsPage(),
+                          SettingsPage(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    ) : const NotPermitted();
+          )
+        : const NotPermitted();
   }
 
   Tab tab(title, icon, index) {

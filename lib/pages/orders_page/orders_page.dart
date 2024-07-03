@@ -8,6 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 
+enum FilterOptions {
+  active,
+  completed,
+}
+
 class OrdersPage extends StatefulWidget {
   const OrdersPage({Key? key}) : super(key: key);
 
@@ -17,248 +22,373 @@ class OrdersPage extends StatefulWidget {
 
 class _OrdersPageState extends State<OrdersPage> {
   final OrdersPageStore pageStore = OrdersPageStore();
-  bool isActiveSelected = true;
+  FilterOptions filterOption = FilterOptions.active; // Default to active
 
   @override
   void initState() {
     pageStore.loadPage();
+    pageStore.updateWeeks();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return authenticated ? Scaffold(
-      body: Observer(builder: (context) {
-        if (pageStore.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.black,
-            ),
-          );
-        }
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return authenticated
+        ? Scaffold(
+            backgroundColor: Colors.white,
+            body: Observer(builder: (context) {
+              if (pageStore.isLoading) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                );
+              }
+              return Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (!isActiveSelected) {
-                        setState(() {
-                          isActiveSelected = true;
-                        });
-                      }
-                    },
-                    child: Text(
-                      'Active',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isActiveSelected
-                            ? const Color(0xffAD0075)
-                            : const Color(0xffFF6600),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 56,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      if (isActiveSelected) {
-                        setState(() {
-                          isActiveSelected = false;
-                        });
-                      }
-                    },
-                    child: Text(
-                      'In Database',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: !isActiveSelected
-                            ? const Color(0xffAD0075)
-                            : const Color(0xffFF6600),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              DropdownButton<String>(
-                value: pageStore.selectedSchool,
-                icon: const Icon(Icons.arrow_downward, color: Colors.black,),
-                elevation: 16,
-                style: const TextStyle(color: Color(0xffAD0075)),
-                underline: Container(
-                  height: 2,
-                  color: const Color(0xffAD0075),
-                ),
-                onChanged: (String? value) {
-                  pageStore.onSchoolChanged(value ?? pageStore.selectedSchool);
-                },
-                items: pageStore.schools.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              isActiveSelected ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: GestureDetector(
-                  onTap: () {
-                    pageStore.makePdf();
-                  },
-                  child: const Row(
-                    children: [
-                      Text(
-                        'Download school orders',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xffAD0075),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Icon(
-                        Icons.download,
-                        color: Color(0xffAD0075),
-                      ),
-                    ],
-                  ),
-                ),
-              ) : const SizedBox(),
-              const SizedBox(
-                height: 16,
-              ),
-              isActiveSelected ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: GestureDetector(
-                  onTap: () async {
-                    if (await confirm(
-                      context,
-                      title: const Text('Confirm'),
-                      content:
-                      const Text('Would you like to remove?'),
-                      textOK: const Text('Yes'),
-                      textCancel: const Text('No'),
-                    )) {
-                      pageStore.completeOrders();
-                    }
-                  },
-                  child: const Row(
-                    children: [
-                      Text(
-                        'Complete all orders',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xffAD0075),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ) : const SizedBox(),
-              Observer(builder: (context) {
-                if (pageStore.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  );
-                }
-                if (isActiveSelected) {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: pageStore.ordersList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                (index + 1).toString(),
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  var orderModel = await context.router.push(
-                                    OrderDetailRoute(
-                                      orderModel: pageStore.ordersList[index],
-                                      completed: false,
-                                    ),
-                                  );
-                                  pageStore.ordersList.remove(orderModel);
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    margin: const EdgeInsets.only(bottom: 6.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          offset: Offset(0.0, 1.0),
-                                          blurRadius: 6.0,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              'Orders',
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          if (filterOption == FilterOptions.active)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 350),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        pageStore.makePdf();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xffAD0075),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          pageStore.ordersList[index].studentId,
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal:
+                                              20, // Adjust horizontal padding
+                                        ),
+                                        shadowColor: Colors.grey
+                                            .withOpacity(0.5), // Shadow color
+                                        elevation: 5, // Elevation
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'Download School Orders',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_circle_right_outlined,
-                                        ),
-                                      ],
+                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.download,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                                SizedBox(width: 20), // Space between buttons
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 250),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        if (await confirm(
+                                          context,
+                                          title: const Text('Confirm'),
+                                          content: const Text(
+                                              'Would you like to remove?'),
+                                          textOK: const Text('Yes'),
+                                          textCancel: const Text('No'),
+                                        )) {
+                                          pageStore.completeOrders();
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xffAD0075),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal:
+                                              20, // Adjust horizontal padding
+                                        ),
+                                        shadowColor: Colors.grey
+                                            .withOpacity(0.5), // Shadow color
+                                        elevation: 5, // Elevation
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'Complete All Orders',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          Observer(builder: (context) {
+                            if (filterOption == FilterOptions.active &&
+                                pageStore.isLoading) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+                            return Expanded(
+                              child: filterOption == FilterOptions.active
+                                  ? ListView.builder(
+                                      itemCount: pageStore.ordersList.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                (index + 1).toString(),
+                                              ),
+                                              SizedBox(width: 16),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  var orderModel =
+                                                      await context.router.push(
+                                                    OrderDetailRoute(
+                                                      orderModel: pageStore
+                                                          .ordersList[index],
+                                                      completed: false,
+                                                      timestamp:
+                                                          pageStore.timestamp ??
+                                                              DateTime.now(),
+                                                    ),
+                                                  );
+                                                  pageStore.ordersList
+                                                      .remove(orderModel);
+                                                },
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          offset:
+                                                              Offset(0.0, 4.0),
+                                                          blurRadius: 6.0,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          pageStore
+                                                              .ordersList[index]
+                                                              .studentId,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 24,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        const Icon(
+                                                          Icons
+                                                              .arrow_circle_right_outlined,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : CompletedOrdersPage(),
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-                  );
-                } else {
-                  return const Expanded(
-                    child: CompletedOrdersPage(),
-                  );
-                }
-              }),
-            ],
-          ),
-        );
-      }),
-    ) : NotPermitted();
+                  ),
+                  Container(
+                    width: 300,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ), // Adjusted horizontal padding
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(color: Colors.grey.shade300),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          const Text(
+                            'Filter',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10), // Reduced space
+                          const Text(
+                            'Status',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          RadioListTile<FilterOptions>(
+                            dense: true, // Reduced vertical space
+                            title: const Text(
+                              'Active',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            value: FilterOptions.active,
+                            groupValue: filterOption,
+                            onChanged: (value) {
+                              setState(() {
+                                filterOption = value!;
+                              });
+                            },
+                            activeColor: const Color(0xffFF6600),
+                          ),
+                          RadioListTile<FilterOptions>(
+                            dense: true, // Reduced vertical space
+                            title: const Text(
+                              'Completed',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            value: FilterOptions.completed,
+                            groupValue: filterOption,
+                            onChanged: (value) {
+                              setState(() {
+                                filterOption = value!;
+                              });
+                            },
+                            activeColor: const Color(0xffFF6600),
+                          ),
+                          const SizedBox(height: 10), // Reduced space
+                          const Text(
+                            'School',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          DropdownButton<String>(
+                            value: pageStore.selectedSchool,
+                            icon: const Icon(
+                              Icons.arrow_downward,
+                              color: Colors.black,
+                            ),
+                            elevation: 16,
+                            style: const TextStyle(color: Color(0xffAD0075)),
+                            underline: Container(
+                              height: 2,
+                              color: const Color(0xffAD0075),
+                            ),
+                            onChanged: (String? value) {
+                              pageStore.onSchoolChanged(
+                                value ?? pageStore.selectedSchool,
+                              );
+                            },
+                            items: pageStore.schools
+                                .map<DropdownMenuItem<String>>(
+                                  (String value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                          const SizedBox(height: 10), // Reduced space
+                          const Text(
+                            'Week',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Column(
+                            children: pageStore.weeks.map((week) {
+                              return RadioListTile<String>(
+                                  title: Text(
+                                    week,
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 14),
+                                  ),
+                                  value: week,
+                                  groupValue: pageStore.selectedWeek,
+                                  onChanged: (String? value) {
+                                    if (value != null) {
+                                      pageStore.onWeekChanged(value);
+                                    }
+                                  },
+                                  activeColor: const Color(0xffFF6600));
+                            }).toList(),
+                          )
+                        ])),
+                  )
+                ],
+              );
+            }),
+          )
+        : NotPermitted();
   }
 }

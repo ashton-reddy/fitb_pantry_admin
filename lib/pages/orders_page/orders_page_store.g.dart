@@ -73,6 +73,38 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     });
   }
 
+  late final _$studentNameAtom =
+      Atom(name: '_OrdersPageStore.studentName', context: context);
+
+  @override
+  String get studentName {
+    _$studentNameAtom.reportRead();
+    return super.studentName;
+  }
+
+  @override
+  set studentName(String value) {
+    _$studentNameAtom.reportWrite(value, super.studentName, () {
+      super.studentName = value;
+    });
+  }
+
+  late final _$timestampAtom =
+      Atom(name: '_OrdersPageStore.timestamp', context: context);
+
+  @override
+  DateTime? get timestamp {
+    _$timestampAtom.reportRead();
+    return super.timestamp;
+  }
+
+  @override
+  set timestamp(DateTime? value) {
+    _$timestampAtom.reportWrite(value, super.timestamp, () {
+      super.timestamp = value;
+    });
+  }
+
   late final _$loadPageAsyncAction =
       AsyncAction('_OrdersPageStore.loadPage', context: context);
 
@@ -112,7 +144,9 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
 isLoading: ${isLoading},
 ordersList: ${ordersList},
 schools: ${schools},
-selectedSchool: ${selectedSchool}
+selectedSchool: ${selectedSchool},
+studentName: ${studentName},
+timestamp: ${timestamp}
     ''';
   }
 }

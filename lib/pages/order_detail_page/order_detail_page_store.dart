@@ -17,8 +17,9 @@ class OrderDetailPageStore = _OrderDetailPageStore with _$OrderDetailPageStore;
 abstract class _OrderDetailPageStore with Store {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final OrderModel orderModel;
+  final DateTime? timestamp;
 
-  _OrderDetailPageStore(this.orderModel);
+  _OrderDetailPageStore(this.orderModel, this.timestamp);
 
   @observable
   bool isLoading = false;
@@ -79,93 +80,92 @@ abstract class _OrderDetailPageStore with Store {
     final coll = firestore.collection("Student");
     final qs = await coll.doc(orderModel.studentId).get();
     final data = qs.data();
+
     if (data != null) {
       studentModel = StudentModel.fromJson(data);
     }
 
+    //print(timestamp);
     isLoading = false;
   }
 
   Future<void> makePdf() async {
     //isLoading = true;
     var myTheme = pw.ThemeData.withFont(
-      base: Font.ttf(await rootBundle.load("assets/fonts/OpenSans-Regular.ttf")),
+      base:
+          Font.ttf(await rootBundle.load("assets/fonts/OpenSans-Regular.ttf")),
     );
     final pdf = pw.Document(
       theme: myTheme,
     );
-    final imageLogo = pw.MemoryImage((await rootBundle.load('assets/logo.png')).buffer.asUint8List());
+    final imageLogo = pw.MemoryImage(
+        (await rootBundle.load('assets/logo.png')).buffer.asUint8List());
     pdf.addPage(
       pw.Page(build: (context) {
         return pw.Center(
-          child: pw.Column(
-              children: [
-                pw.Container(
-                  padding: const pw.EdgeInsets.all(16.0),
-                  child: pw.Image(
-                    imageLogo,
-                    fit: pw.BoxFit.contain,
-                    height: 50,
-                  ),
+          child: pw.Column(children: [
+            pw.Container(
+              padding: const pw.EdgeInsets.all(16.0),
+              child: pw.Image(
+                imageLogo,
+                fit: pw.BoxFit.contain,
+                height: 50,
+              ),
+            ),
+            pw.Text(
+              '${studentModel!.firstName} ${studentModel!.lastName}',
+              textAlign: TextAlign.center,
+              style: const pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            pw.Text(
+              'email: ${studentModel!.email}',
+              textAlign: TextAlign.center,
+              style: const pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            pw.Text(
+              'phone number: ${studentModel!.phoneNumber}',
+              textAlign: TextAlign.center,
+              style: const pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            pw.Text(
+              'school: ${studentModel!.school}',
+              textAlign: TextAlign.center,
+              style: const pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            pw.SizedBox(height: 32),
+            pw.Text(
+              'Items: ',
+              textAlign: TextAlign.left,
+              style: const pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            pw.SizedBox(height: 16),
+            for (var item in itemsList)
+              pw.Text(
+                '${item.id} - ${orderModel.items.firstWhere((element) => element.itemId == item.id).quantity}',
+                textAlign: TextAlign.left,
+                style: const pw.TextStyle(
+                  fontSize: 18,
                 ),
-                pw.Text(
-                  '${studentModel!.firstName} ${studentModel!.lastName}',
-                  textAlign: TextAlign.center,
-                  style: const pw.TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-                pw.Text(
-                  'email: ${studentModel!.email}',
-                  textAlign: TextAlign.center,
-                  style: const pw.TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-                pw.Text(
-                  'phone number: ${studentModel!.phoneNumber}',
-                  textAlign: TextAlign.center,
-                  style: const pw.TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-                pw.Text(
-                  'school: ${studentModel!.school}',
-                  textAlign: TextAlign.center,
-                  style: const pw.TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-                pw.SizedBox(
-                  height: 32
-                ),
-                pw.Text(
-                  'Items: ',
-                  textAlign: TextAlign.left,
-                  style: const pw.TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-                pw.SizedBox(
-                    height: 16
-                ),
-                for(var item in itemsList)
-                  pw.Text(
-                    '${item.id} - ${orderModel.items.firstWhere((element) => element.itemId == item.id).quantity}',
-                    textAlign: TextAlign.left,
-                    style: const pw.TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-              ]
-          ),
+              ),
+          ]),
         );
       }),
     );
 
     var bytes = await pdf.save();
     await FileSaver.instance.saveFile(
-      bytes: bytes, name: 'order.pdf',
+      bytes: bytes,
+      name: 'order.pdf',
     );
   }
 }

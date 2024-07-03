@@ -79,7 +79,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'name',
+                                  hintText: 'Name',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -93,7 +93,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'open Date',
+                                  hintText: 'Open Date',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -110,7 +110,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'close Date',
+                                  hintText: 'Close Date',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -127,7 +127,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'email',
+                                  hintText: 'Email',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),

@@ -4,16 +4,16 @@ part 'school_model.g.dart';
 
 @JsonSerializable()
 class SchoolModel {
-  @JsonKey(name: 'close date')
+  @JsonKey(name: 'Close date')
   int closeDate;
 
-  @JsonKey(name: 'is active')
+  @JsonKey(name: 'Is active')
   bool isActive;
 
   @JsonKey()
   String name;
 
-  @JsonKey(name: 'open date')
+  @JsonKey(name: 'Open date')
   int openDate;
 
   @JsonKey()

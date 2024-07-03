@@ -25,78 +25,82 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return authenticated ? Scaffold(
-      body: Observer(builder: (context) {
-        if (pageStore.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.black,
-            ),
-          );
-        }
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: ListView.builder(
-            itemCount: pageStore.ordersList.length,
-            itemBuilder: (context, index) {
+    return authenticated
+        ? Scaffold(
+            body: Observer(builder: (context) {
+              if (pageStore.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                );
+              }
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      (index + 1).toString(),
-                    ),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        var orderModel = await context.router.push(
-                          OrderDetailRoute(
-                            orderModel: pageStore.ordersList[index],
-                            completed: true,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: ListView.builder(
+                  itemCount: pageStore.ordersList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            (index + 1).toString(),
                           ),
-                        );
-                        pageStore.ordersList.remove(orderModel);
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          margin: const EdgeInsets.only(bottom: 6.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(0.0, 1.0),
-                                blurRadius: 6.0,
-                              ),
-                            ],
+                          const SizedBox(
+                            width: 16,
                           ),
-                          child: Row(
-                            children: [
-                              Text(
-                                pageStore.ordersList[index].studentId,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () async {
+                              var orderModel = await context.router.push(
+                                OrderDetailRoute(
+                                    orderModel: pageStore.ordersList[index],
+                                    completed: true,
+                                    timestamp:
+                                        pageStore.timestamp ?? DateTime.now()),
+                              );
+                              pageStore.ordersList.remove(orderModel);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(bottom: 6.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(0.0, 1.0),
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      pageStore.ordersList[index].studentId,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               );
-            },
-          ),
-        );
-      }),
-    ) : NotPermitted();
+            }),
+          )
+        : NotPermitted();
   }
 }

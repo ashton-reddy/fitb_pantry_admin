@@ -51,8 +51,10 @@ extension GetItInjectableX on _i1.GetIt {
     gh.factory<_i9.AddCategoryPageStore>(() => _i9.AddCategoryPageStore());
     gh.factory<_i10.OrdersPageStore>(() => _i10.OrdersPageStore());
     gh.factory<_i11.CategoriesPageStore>(() => _i11.CategoriesPageStore());
-    gh.factory<_i12.OrderDetailPageStore>(
-        () => _i12.OrderDetailPageStore(gh<_i13.OrderModel>()));
+    gh.factory<_i12.OrderDetailPageStore>(() => _i12.OrderDetailPageStore(
+          gh<_i13.OrderModel>(),
+          gh<DateTime>(),
+        ));
     gh.factory<_i14.EditSchoolPageStore>(() => _i14.EditSchoolPageStore(
           gh<_i15.SchoolModel>(),
           gh<_i4.AddSchoolPageStore>(),

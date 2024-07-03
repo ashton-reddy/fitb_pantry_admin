@@ -24,7 +24,7 @@ abstract class _SchoolsPageStore with Store {
     isLoading = true;
     schoolsList = ObservableList.of([]);
     QuerySnapshot<Map<String, dynamic>> snapshot =
-    await firestore.collection("School").get();
+        await firestore.collection("School").get();
     for (int i = 0; i < snapshot.docs.length; i++) {
       final data = snapshot.docs[i].data();
       final school = SchoolModel.fromJson(data);
@@ -51,10 +51,11 @@ abstract class _SchoolsPageStore with Store {
   Future<void> deactivateSchool(int index, bool currentStatus) async {
     isLoading = true;
     Map<String, dynamic> newData = {
-      'name': schoolsList[index].name,
-      'open date': schoolsList[index].openDate,
-      'close date': schoolsList[index].closeDate,
-      'is active' : !currentStatus,
+      'Name': schoolsList[index].name,
+      'Open date': schoolsList[index].openDate,
+      'Close date': schoolsList[index].closeDate,
+      'Is active': !currentStatus,
+      'Email': schoolsList[index].email,
     };
     await FirebaseFirestore.instance
         .collection('School')

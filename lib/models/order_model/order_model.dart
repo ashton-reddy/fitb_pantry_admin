@@ -11,10 +11,7 @@ class OrderModel {
   @JsonKey()
   List<OrderedItemModel> items;
 
-  OrderModel({
-    required this.studentId,
-    required this.items,
-  });
+  OrderModel({required this.studentId, required this.items});
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return _$OrderModelFromJson(json);

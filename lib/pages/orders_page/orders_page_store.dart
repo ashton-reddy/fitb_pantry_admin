@@ -11,7 +11,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-
+import 'package:intl/intl.dart';
 part 'orders_page_store.g.dart';
 
 @injectable
@@ -34,6 +34,21 @@ abstract class _OrdersPageStore with Store {
   @observable
   String selectedSchool = '';
 
+  @observable
+  String selectedWeek = '';
+
+  @observable
+  String studentName = '';
+
+  @observable
+  DateTime? timestamp;
+
+  @observable
+  ObservableList<String> weeks = ObservableList.of([]);
+
+  @observable
+  String formattedSunday = '';
+
   @action
   Future<void> loadPage() async {
     isLoading = true;
@@ -50,6 +65,7 @@ abstract class _OrdersPageStore with Store {
 
     QuerySnapshot<Map<String, dynamic>> snapshot =
         await firestore.collection("Orders").get();
+
     for (int i = 0; i < snapshot.docs.length; i++) {
       final data = snapshot.docs[i].data();
       final order = OrderModel.fromJson(data);
@@ -57,10 +73,10 @@ abstract class _OrdersPageStore with Store {
       final qs = await coll.doc(order.studentId).get();
       final studentData = qs.data();
       if (studentData != null) {
-        if (studentData['school'] == selectedSchool) {
-          ordersList.add(
-            order,
-          );
+        timestamp = studentData['timestamp'];
+        if (formattedSunday == selectedWeek &&
+            studentData['school'] == selectedSchool) {
+          ordersList.add(order);
         }
       }
     }
@@ -73,6 +89,7 @@ abstract class _OrdersPageStore with Store {
     ordersList = ObservableList.of([]);
     schools = ObservableList.of([]);
     selectedSchool = '';
+    selectedWeek = '';
     await loadPage();
   }
 
@@ -106,6 +123,64 @@ abstract class _OrdersPageStore with Store {
     await reloadPage();
   }
 
+  DateTime getSundayDate(DateTime date) {
+    int daysToSunday = date.weekday % 7;
+
+    DateTime sundayDate = date.subtract(Duration(days: daysToSunday));
+    return sundayDate;
+  }
+
+  @action
+  Future<void> updateWeeks() async {
+    try {
+      isLoading = true;
+      weeks.clear();
+      Set<DateTime> uniqueSundays = {};
+
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await firestore.collection("Orders").get();
+
+      for (int i = 0; i < snapshot.docs.length; i++) {
+        final data = snapshot.docs[i].data();
+        final order = OrderModel.fromJson(data);
+
+        final studentDoc =
+            await firestore.collection("Student").doc(order.studentId).get();
+        final studentData = studentDoc.data();
+
+        if (studentData != null && studentData['timestamp'] != null) {
+          final timestampFromFirestore = studentData['timestamp'] as Timestamp;
+          DateTime timestamp = timestampFromFirestore.toDate();
+          DateTime sundayDate = getSundayDate(timestamp);
+
+          uniqueSundays.add(sundayDate);
+        }
+      }
+
+      // Format dates into strings
+      List<String> formattedWeeks = uniqueSundays.map((sundayDate) {
+        String formattedSunday = DateFormat('MMMM d').format(sundayDate);
+        return "Week of $formattedSunday";
+      }).toList();
+
+      // Add formatted weeks to a Set to ensure uniqueness
+      Set<String> uniqueWeeksSet = Set.from(formattedWeeks);
+
+      // Convert Set back to List (if sorting is needed)
+      List<String> sortedUniqueWeeks = uniqueWeeksSet.toList();
+      // Sort the list of weeks (if required)
+      sortedUniqueWeeks.sort((a, b) => a.compareTo(b));
+
+      // Assign the sorted and unique weeks to observable list
+      weeks.addAll(sortedUniqueWeeks);
+
+      isLoading = false;
+    } catch (e) {
+      print("Error in updateWeeks: $e");
+      isLoading = false;
+    }
+  }
+
   @action
   Future<void> onSchoolChanged(String newSchool) async {
     isLoading = true;
@@ -121,13 +196,43 @@ abstract class _OrdersPageStore with Store {
       final qs = await coll.doc(order.studentId).get();
       final studentData = qs.data();
       if (studentData != null) {
-        if (studentData['school'] == selectedSchool) {
-          ordersList.add(
-            order,
-          );
+        if (formattedSunday == selectedWeek &&
+            studentData['school'] == selectedSchool) {
+          ordersList.add(order);
         }
       }
     }
+    isLoading = false;
+  }
+
+  @action
+  Future<void> onWeekChanged(String newWeek) async {
+    isLoading = true;
+    selectedWeek = newWeek;
+    ordersList = ObservableList.of([]);
+
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await firestore.collection("Orders").get();
+    for (int i = 0; i < snapshot.docs.length; i++) {
+      final data = snapshot.docs[i].data();
+      final order = OrderModel.fromJson(data);
+      final coll = firestore.collection("Student");
+      final qs = await coll.doc(order.studentId).get();
+      final studentData = qs.data();
+      if (studentData != null) {
+        DateTime timestamp = studentData['timestamp'].toDate();
+        DateTime sundayDate = getSundayDate(timestamp);
+        formattedSunday = DateFormat('MMMM d').format(sundayDate);
+        formattedSunday = 'Week of $formattedSunday'.trim();
+        selectedWeek = selectedWeek.trim();
+        if (formattedSunday == selectedWeek &&
+            studentData['school'] == selectedSchool) {
+          print(order.studentId);
+          ordersList.add(order);
+        }
+      }
+    }
+
     isLoading = false;
   }
 

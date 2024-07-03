@@ -69,6 +69,7 @@ abstract class _$AppRouter extends RootStackRouter {
           key: args.key,
           orderModel: args.orderModel,
           completed: args.completed,
+          timestamp: args.timestamp,
         ),
       );
     },
@@ -216,6 +217,7 @@ class OrderDetailRoute extends PageRouteInfo<OrderDetailRouteArgs> {
     Key? key,
     required OrderModel orderModel,
     required bool completed,
+    required DateTime timestamp,
     List<PageRouteInfo>? children,
   }) : super(
           OrderDetailRoute.name,
@@ -223,6 +225,7 @@ class OrderDetailRoute extends PageRouteInfo<OrderDetailRouteArgs> {
             key: key,
             orderModel: orderModel,
             completed: completed,
+            timestamp: timestamp,
           ),
           initialChildren: children,
         );
@@ -238,6 +241,7 @@ class OrderDetailRouteArgs {
     this.key,
     required this.orderModel,
     required this.completed,
+    required this.timestamp,
   });
 
   final Key? key;
@@ -246,9 +250,11 @@ class OrderDetailRouteArgs {
 
   final bool completed;
 
+  final DateTime timestamp;
+
   @override
   String toString() {
-    return 'OrderDetailRouteArgs{key: $key, orderModel: $orderModel, completed: $completed}';
+    return 'OrderDetailRouteArgs{key: $key, orderModel: $orderModel, completed: $completed, timestamp: $timestamp}';
   }
 }
 
