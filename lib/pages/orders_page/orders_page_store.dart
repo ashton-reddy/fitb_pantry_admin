@@ -44,6 +44,9 @@ abstract class _OrdersPageStore with Store {
   DateTime? timestamp;
 
   @observable
+  DateTime? orderTimestamp;
+
+  @observable
   ObservableList<String> weeks = ObservableList.of([]);
 
   @observable
@@ -72,10 +75,18 @@ abstract class _OrdersPageStore with Store {
       final coll = firestore.collection("Student");
       final qs = await coll.doc(order.studentId).get();
       final studentData = qs.data();
+
       if (studentData != null) {
         timestamp = studentData['timestamp'];
+        print('Timestamp: $timestamp');
+        DateTime orderTimestamp = studentData['timestamp'].toDate();
+        DateTime sundayDate = getSundayDate(orderTimestamp);
+        formattedSunday = DateFormat('MMMM d').format(sundayDate);
+        formattedSunday = 'Week of $formattedSunday'.trim();
+        selectedWeek = selectedWeek.trim();
         if (formattedSunday == selectedWeek &&
             studentData['school'] == selectedSchool) {
+          print(order.studentId);
           ordersList.add(order);
         }
       }
@@ -150,28 +161,23 @@ abstract class _OrdersPageStore with Store {
 
         if (studentData != null && studentData['timestamp'] != null) {
           final timestampFromFirestore = studentData['timestamp'] as Timestamp;
-          DateTime timestamp = timestampFromFirestore.toDate();
-          DateTime sundayDate = getSundayDate(timestamp);
+          DateTime orderTimestamp = timestampFromFirestore.toDate();
+          DateTime sundayDate = getSundayDate(orderTimestamp);
 
           uniqueSundays.add(sundayDate);
         }
       }
 
-      // Format dates into strings
       List<String> formattedWeeks = uniqueSundays.map((sundayDate) {
         String formattedSunday = DateFormat('MMMM d').format(sundayDate);
         return "Week of $formattedSunday";
       }).toList();
 
-      // Add formatted weeks to a Set to ensure uniqueness
       Set<String> uniqueWeeksSet = Set.from(formattedWeeks);
 
-      // Convert Set back to List (if sorting is needed)
       List<String> sortedUniqueWeeks = uniqueWeeksSet.toList();
-      // Sort the list of weeks (if required)
       sortedUniqueWeeks.sort((a, b) => a.compareTo(b));
 
-      // Assign the sorted and unique weeks to observable list
       weeks.addAll(sortedUniqueWeeks);
 
       isLoading = false;
@@ -220,8 +226,8 @@ abstract class _OrdersPageStore with Store {
       final qs = await coll.doc(order.studentId).get();
       final studentData = qs.data();
       if (studentData != null) {
-        DateTime timestamp = studentData['timestamp'].toDate();
-        DateTime sundayDate = getSundayDate(timestamp);
+        DateTime orderTimestamp = studentData['timestamp'].toDate();
+        DateTime sundayDate = getSundayDate(orderTimestamp);
         formattedSunday = DateFormat('MMMM d').format(sundayDate);
         formattedSunday = 'Week of $formattedSunday'.trim();
         selectedWeek = selectedWeek.trim();
