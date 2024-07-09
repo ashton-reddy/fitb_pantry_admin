@@ -68,10 +68,10 @@ class _OrdersPageState extends State<OrdersPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child: ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 350),
+                                    constraints: BoxConstraints(maxWidth: 245),
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        pageStore.makePdf();
+                                        pageStore.makeOrdersPdf();
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Color(0xffAD0075),
@@ -81,24 +81,23 @@ class _OrdersPageState extends State<OrdersPage> {
                                         ),
                                         padding: EdgeInsets.symmetric(
                                           vertical: 16,
-                                          horizontal:
-                                              20, // Adjust horizontal padding
+                                          horizontal: 10,
                                         ),
-                                        shadowColor: Colors.grey
-                                            .withOpacity(0.5), // Shadow color
-                                        elevation: 5, // Elevation
+                                        shadowColor:
+                                            Colors.grey.withOpacity(0.5),
+                                        elevation: 5,
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             'Download School Orders',
                                             style: TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w500,
                                               color: Colors.white,
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          SizedBox(width: 7),
                                           Icon(
                                             Icons.download,
                                             color: Colors.white,
@@ -108,11 +107,54 @@ class _OrdersPageState extends State<OrdersPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 20), // Space between buttons
+                                SizedBox(width: 10),
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child: ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 250),
+                                    constraints: BoxConstraints(maxWidth: 204),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        pageStore.makeInvPdf();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xffAD0075),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 10,
+                                        ),
+                                        shadowColor:
+                                            Colors.grey.withOpacity(0.5),
+                                        elevation: 5,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'Download Inventory',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          SizedBox(width: 7),
+                                          Icon(
+                                            Icons.download,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 190),
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         if (await confirm(
@@ -134,19 +176,18 @@ class _OrdersPageState extends State<OrdersPage> {
                                         ),
                                         padding: EdgeInsets.symmetric(
                                           vertical: 16,
-                                          horizontal:
-                                              20, // Adjust horizontal padding
+                                          horizontal: 10,
                                         ),
-                                        shadowColor: Colors.grey
-                                            .withOpacity(0.5), // Shadow color
-                                        elevation: 5, // Elevation
+                                        shadowColor:
+                                            Colors.grey.withOpacity(0.5),
+                                        elevation: 5,
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             'Complete All Orders',
                                             style: TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w500,
                                               color: Colors.white,
                                             ),
@@ -156,6 +197,10 @@ class _OrdersPageState extends State<OrdersPage> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(width: 5),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 16),
+                                )
                               ],
                             ),
                           Observer(builder: (context) {
@@ -262,7 +307,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     padding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 16,
-                    ), // Adjusted horizontal padding
+                    ),
                     decoration: BoxDecoration(
                       border: Border(
                         left: BorderSide(color: Colors.grey.shade300),

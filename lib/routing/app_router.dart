@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:fitbadmin/pages/edit_item_page/edit_item_page.dart';
 import 'package:fitbadmin/pages/sign_in_page/sign_in_page.dart';
 import 'package:fitbadmin/pages/home_page/home_page.dart';
 import 'package:fitbadmin/pages/items_page/items_page.dart';
@@ -10,8 +11,12 @@ import 'package:fitbadmin/pages/order_detail_page/order_detail_page.dart';
 import 'package:fitbadmin/pages/add_school_page/add_school_page.dart';
 import 'package:fitbadmin/models/order_model/order_model.dart';
 import 'package:fitbadmin/pages/edit_school_page/edit_school_page.dart';
+import 'package:fitbadmin/pages/edit_category_page/edit_category_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fitbadmin/models/category_model/category_model.dart';
 import 'package:fitbadmin/models/school_model/school_model.dart';
+import 'package:fitbadmin/pages/edit_item_page/edit_item_page.dart';
+import 'package:fitbadmin/models/item_model/item_model.dart';
 
 part 'app_router.gr.dart';
 
@@ -47,6 +52,8 @@ class AppRouter extends _$AppRouter {
         AutoRoute(
           page: AddSchoolRoute.page,
         ),
-        AutoRoute(page: EditSchoolRoute.page)
+        AutoRoute(page: EditSchoolRoute.page),
+        AutoRoute(page: EditCategoryRoute.page),
+        AutoRoute(page: EditItemRoute.page)
       ];
 }

@@ -145,18 +145,18 @@ class _EditSchoolPageState extends State<EditSchoolPage> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  await pageStore.saveSchools(
-                                      nameController.text,
-                                      int.parse(openDateController.text),
-                                      int.parse(closeDateController.text),
-                                      emailController.text);
-                                  Future.delayed(Duration.zero, () {
-                                    if (context.mounted) {
-                                      context.router.replace(
-                                        const SchoolsRoute(),
-                                      );
-                                    }
-                                  });
+                                  try {
+                                    await pageStore.saveSchools(
+                                       nameController.text,
+                                     int.parse(openDateController.text),
+                                    int.parse(closeDateController.text),
+                                    emailController.text);
+                                    context.router
+                                        .replace(const SchoolsRoute());
+                                  } catch (e, stackTrace) {
+                                    print('Error saving school: $e');
+                                    print(stackTrace);
+                                  }
                                 },
                                 child: Container(
                                   constraints:

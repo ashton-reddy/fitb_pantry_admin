@@ -140,6 +140,15 @@ class _ItemsPageState extends State<ItemsPage> {
                         Icons.delete,
                       ),
                     ),
+                      GestureDetector(
+                              onTap: () {
+                                context.router.push(EditItemRoute(
+                                    item:
+                                        pageStore.itemsList[index - 1]));
+                              },
+                              child: const Icon(
+                                Icons.edit,
+                              ))
                   ],
                 ),
               );

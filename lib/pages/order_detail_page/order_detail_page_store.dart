@@ -85,7 +85,6 @@ abstract class _OrderDetailPageStore with Store {
       studentModel = StudentModel.fromJson(data);
     }
 
-    //print(timestamp);
     isLoading = false;
   }
 

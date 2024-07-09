@@ -26,17 +26,19 @@ abstract class _AddSchoolPageStore with Store {
   }
 
   @action
-  Future<void> saveSchools(String name, int openDate, int closeDate, String email) async {
+  Future<void> saveSchools(
+      String name, int openDate, int closeDate, String email) async {
     isLoading = true;
     Map<String, dynamic> dataToSave = {
       'Name': name,
       'Open date': openDate,
       'Close date': closeDate,
-      'Is active' : true,
+      'Is active': true,
       'Email': email
     };
     CollectionReference collectionRef =
-    FirebaseFirestore.instance.collection('School');
+        FirebaseFirestore.instance.collection('School');
+
     await collectionRef.doc(name).set(dataToSave);
     isLoading = false;
   }

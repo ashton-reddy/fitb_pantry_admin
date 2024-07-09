@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:fitbadmin/main.dart';
+import 'package:fitbadmin/pages/edit_category_page/edit_category_page_store.dart';
+import 'package:fitbadmin/models/category_model/category_model.dart';
 import 'package:fitbadmin/pages/add_category_page/add_category_page_store.dart';
-import 'package:fitbadmin/pages/add_item_page/add_item_page_store.dart';
-import 'package:fitbadmin/pages/add_school_page/add_school_page_store.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:fitbadmin/widgets/logo_header.dart';
 import 'package:fitbadmin/widgets/not_permitted_widget.dart';
@@ -10,30 +9,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../main.dart';
+
 @RoutePage()
-class AddSchoolPage extends StatefulWidget {
-  const AddSchoolPage({Key? key}) : super(key: key);
+class EditCategoryPage extends StatefulWidget {
+  final CategoryModel category;
+  const EditCategoryPage({Key? key, required this.category}) : super(key: key);
 
   @override
-  State<AddSchoolPage> createState() => _AddSchoolPageState();
+  State<EditCategoryPage> createState() => _EditCategoryPageState();
 }
 
-class _AddSchoolPageState extends State<AddSchoolPage> {
-  final AddSchoolPageStore pageStore = AddSchoolPageStore();
+class _EditCategoryPageState extends State<EditCategoryPage> {
+  late EditCategoryPageStore pageStore;
 
-  final TextEditingController nameController = TextEditingController();
-
-  final TextEditingController openDateController = TextEditingController();
-  final TextEditingController closeDateController = TextEditingController();
-
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController groupController = TextEditingController();
+  final TextEditingController limitController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    pageStore = EditCategoryPageStore(widget.category, AddCategoryPageStore());
     pageStore.loadPage();
     super.initState();
+
+    groupController.text = widget.category.name ?? '';
+    limitController.text = widget.category.totalLimit.toString();
   }
 
   @override
@@ -63,7 +65,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                           child: Column(
                             children: [
                               const Text(
-                                'Add School',
+                                'Edit Category',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
@@ -74,7 +76,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                 height: 32,
                               ),
                               TextFormField(
-                                controller: nameController,
+                                controller: groupController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -88,12 +90,12 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                 height: 32,
                               ),
                               TextFormField(
-                                controller: openDateController,
+                                controller: limitController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'Open Date',
+                                  hintText: 'limit',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
@@ -102,50 +104,19 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                 ],
                               ),
                               const SizedBox(
-                                height: 32,
-                              ),
-                              TextFormField(
-                                controller: closeDateController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  hintText: 'Close Date',
-                                  fillColor: const Color(0xfff2f4fa),
-                                  filled: true,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 32,
-                              ),
-                              TextFormField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  hintText: 'Email',
-                                  fillColor: const Color(0xfff2f4fa),
-                                  filled: true,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 32,
+                                height: 16,
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  await pageStore.saveSchools(
-                                      nameController.text,
-                                      int.parse(openDateController.text),
-                                      int.parse(closeDateController.text),
-                                      emailController.text);
+                                  await pageStore.saveCategorys(
+                                    groupController.text,
+                                    int.parse(limitController.text),
+                                  );
                                   Future.delayed(Duration.zero, () {
                                     if (context.mounted) {
-                                      context.router
-                                          .replace(const SchoolsRoute());
+                                      context.router.replace(
+                                        const CategoriesRoute(),
+                                      );
                                     }
                                   });
                                 },
@@ -164,7 +135,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      'Add School',
+                                      'Done',
                                       style: TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.w700,

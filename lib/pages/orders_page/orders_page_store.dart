@@ -78,7 +78,6 @@ abstract class _OrdersPageStore with Store {
 
       if (studentData != null) {
         timestamp = studentData['timestamp'];
-        print('Timestamp: $timestamp');
         DateTime orderTimestamp = studentData['timestamp'].toDate();
         DateTime sundayDate = getSundayDate(orderTimestamp);
         formattedSunday = DateFormat('MMMM d').format(sundayDate);
@@ -86,7 +85,6 @@ abstract class _OrdersPageStore with Store {
         selectedWeek = selectedWeek.trim();
         if (formattedSunday == selectedWeek &&
             studentData['school'] == selectedSchool) {
-          print(order.studentId);
           ordersList.add(order);
         }
       }
@@ -233,7 +231,6 @@ abstract class _OrdersPageStore with Store {
         selectedWeek = selectedWeek.trim();
         if (formattedSunday == selectedWeek &&
             studentData['school'] == selectedSchool) {
-          print(order.studentId);
           ordersList.add(order);
         }
       }
@@ -242,7 +239,7 @@ abstract class _OrdersPageStore with Store {
     isLoading = false;
   }
 
-  Future<void> makePdf() async {
+  Future<void> makeOrdersPdf() async {
     isLoading = true;
     List<pw.Widget> gridTiles = [];
     List itemImages = [];
@@ -386,6 +383,160 @@ abstract class _OrdersPageStore with Store {
     await FileSaver.instance.saveFile(
       bytes: bytes,
       name: 'orders.pdf',
+    );
+
+    isLoading = false;
+  }
+
+  Future<void> makeInvPdf() async {
+    isLoading = true;
+
+    // Initialize lists and maps
+    Map<String, Map<String, int>> groupedItems =
+        {}; // Map to group items by category
+
+    // Iterate through orders
+    for (var orderModel in ordersList) {
+      // Fetch items details for each order
+      for (var item in orderModel.items) {
+        final coll = firestore.collection("Items");
+        final qs = await coll.doc(item.itemId).get();
+        final data = qs.data();
+
+        if (data != null) {
+          final itemInstance = ItemModel.fromJson(data);
+
+          // Accumulate item quantities by category (group)
+          if (groupedItems.containsKey(itemInstance.group)) {
+            if (groupedItems[itemInstance.group]!
+                .containsKey(itemInstance.label)) {
+              groupedItems[itemInstance.group]![itemInstance.label] =
+                  groupedItems[itemInstance.group]![itemInstance.label]! +
+                      item.quantity;
+            } else {
+              groupedItems[itemInstance.group]![itemInstance.label] =
+                  item.quantity;
+            }
+          } else {
+            groupedItems[itemInstance.group] = {
+              itemInstance.label: item.quantity,
+            };
+          }
+        } else {}
+      }
+    }
+
+    var myTheme = pw.ThemeData.withFont(
+      base: pw.Font.ttf(
+          await rootBundle.load("assets/fonts/OpenSans-Regular.ttf")),
+    );
+    final pdf = pw.Document(theme: myTheme);
+    final imageLogo = pw.MemoryImage(
+        (await rootBundle.load('assets/logo.png')).buffer.asUint8List());
+
+    final headerWidget = pw.Container(
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(
+          color: PdfColors.black,
+          width: 1.0,
+        ),
+      ),
+      padding: pw.EdgeInsets.all(10.0),
+      child: pw.Column(
+        crossAxisAlignment:
+            pw.CrossAxisAlignment.start, // Align children to the left
+        children: [
+          pw.Container(
+            alignment: pw.Alignment.center, // Center the header text
+            padding: const pw.EdgeInsets.all(16.0),
+            child: pw.Image(
+              imageLogo,
+              fit: pw.BoxFit.contain,
+              height: 50,
+            ),
+          ),
+          pw.SizedBox(height: 8),
+          pw.Container(
+            alignment: pw.Alignment.center,
+            child: pw.Text(
+              '$selectedSchool Inventory',
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 24,
+              ),
+            ),
+          ),
+          pw.SizedBox(height: 8),
+          pw.Container(
+            alignment: pw.Alignment.center,
+            child: pw.Text(
+              '$selectedWeek',
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
+          pw.Divider(
+            thickness: 1,
+            color: PdfColors.grey,
+          ),
+          pw.SizedBox(height: 8),
+          ...groupedItems.keys.expand((category) {
+            List<pw.Widget> rows = [
+              pw.Padding(
+                padding: pw.EdgeInsets.only(left: 2.0),
+                child: pw.Text(
+                  '$category:',
+                  textAlign: pw.TextAlign.left,
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ];
+
+            groupedItems[category]!.forEach((itemName, quantity) {
+              rows.add(
+                pw.Container(
+                  padding: pw.EdgeInsets.symmetric(vertical: 5),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        '$itemName x $quantity',
+                        textAlign: pw.TextAlign.left,
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+
+            // Add a divider line after each category except the last one
+            rows.add(
+              pw.Divider(
+                thickness: 1,
+                color: PdfColors.grey,
+              ),
+            );
+
+            return rows;
+          }).toList(),
+        ],
+      ),
+    );
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => [headerWidget],
+      ),
+    );
+
+    var bytes = await pdf.save();
+    await FileSaver.instance.saveFile(
+      bytes: bytes,
+      name: 'inventory.pdf',
     );
 
     isLoading = false;

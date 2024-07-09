@@ -39,6 +39,26 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const CategoriesPage(),
       );
     },
+    EditCategoryRoute.name: (routeData) {
+      final args = routeData.argsAs<EditCategoryRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EditCategoryPage(
+          key: args.key,
+          category: args.category,
+        ),
+      );
+    },
+    EditItemRoute.name: (routeData) {
+      final args = routeData.argsAs<EditItemRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EditItemPage(
+          key: args.key,
+          item: args.item,
+        ),
+      );
+    },
     EditSchoolRoute.name: (routeData) {
       final args = routeData.argsAs<EditSchoolRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -145,6 +165,82 @@ class CategoriesRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [EditCategoryPage]
+class EditCategoryRoute extends PageRouteInfo<EditCategoryRouteArgs> {
+  EditCategoryRoute({
+    Key? key,
+    required CategoryModel category,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditCategoryRoute.name,
+          args: EditCategoryRouteArgs(
+            key: key,
+            category: category,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditCategoryRoute';
+
+  static const PageInfo<EditCategoryRouteArgs> page =
+      PageInfo<EditCategoryRouteArgs>(name);
+}
+
+class EditCategoryRouteArgs {
+  const EditCategoryRouteArgs({
+    this.key,
+    required this.category,
+  });
+
+  final Key? key;
+
+  final CategoryModel category;
+
+  @override
+  String toString() {
+    return 'EditCategoryRouteArgs{key: $key, category: $category}';
+  }
+}
+
+/// generated route for
+/// [EditItemPage]
+class EditItemRoute extends PageRouteInfo<EditItemRouteArgs> {
+  EditItemRoute({
+    Key? key,
+    required ItemModel item,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditItemRoute.name,
+          args: EditItemRouteArgs(
+            key: key,
+            item: item,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditItemRoute';
+
+  static const PageInfo<EditItemRouteArgs> page =
+      PageInfo<EditItemRouteArgs>(name);
+}
+
+class EditItemRouteArgs {
+  const EditItemRouteArgs({
+    this.key,
+    required this.item,
+  });
+
+  final Key? key;
+
+  final ItemModel item;
+
+  @override
+  String toString() {
+    return 'EditItemRouteArgs{key: $key, item: $item}';
+  }
+}
+
+/// generated route for
 /// [EditSchoolPage]
 class EditSchoolRoute extends PageRouteInfo<EditSchoolRouteArgs> {
   EditSchoolRoute({
@@ -217,7 +313,7 @@ class OrderDetailRoute extends PageRouteInfo<OrderDetailRouteArgs> {
     Key? key,
     required OrderModel orderModel,
     required bool completed,
-    required DateTime timestamp,
+    required DateTime? timestamp,
     List<PageRouteInfo>? children,
   }) : super(
           OrderDetailRoute.name,
@@ -250,7 +346,7 @@ class OrderDetailRouteArgs {
 
   final bool completed;
 
-  final DateTime timestamp;
+  final DateTime? timestamp;
 
   @override
   String toString() {

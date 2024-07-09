@@ -73,6 +73,22 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     });
   }
 
+  late final _$selectedWeekAtom =
+      Atom(name: '_OrdersPageStore.selectedWeek', context: context);
+
+  @override
+  String get selectedWeek {
+    _$selectedWeekAtom.reportRead();
+    return super.selectedWeek;
+  }
+
+  @override
+  set selectedWeek(String value) {
+    _$selectedWeekAtom.reportWrite(value, super.selectedWeek, () {
+      super.selectedWeek = value;
+    });
+  }
+
   late final _$studentNameAtom =
       Atom(name: '_OrdersPageStore.studentName', context: context);
 
@@ -105,6 +121,54 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     });
   }
 
+  late final _$orderTimestampAtom =
+      Atom(name: '_OrdersPageStore.orderTimestamp', context: context);
+
+  @override
+  DateTime? get orderTimestamp {
+    _$orderTimestampAtom.reportRead();
+    return super.orderTimestamp;
+  }
+
+  @override
+  set orderTimestamp(DateTime? value) {
+    _$orderTimestampAtom.reportWrite(value, super.orderTimestamp, () {
+      super.orderTimestamp = value;
+    });
+  }
+
+  late final _$weeksAtom =
+      Atom(name: '_OrdersPageStore.weeks', context: context);
+
+  @override
+  ObservableList<String> get weeks {
+    _$weeksAtom.reportRead();
+    return super.weeks;
+  }
+
+  @override
+  set weeks(ObservableList<String> value) {
+    _$weeksAtom.reportWrite(value, super.weeks, () {
+      super.weeks = value;
+    });
+  }
+
+  late final _$formattedSundayAtom =
+      Atom(name: '_OrdersPageStore.formattedSunday', context: context);
+
+  @override
+  String get formattedSunday {
+    _$formattedSundayAtom.reportRead();
+    return super.formattedSunday;
+  }
+
+  @override
+  set formattedSunday(String value) {
+    _$formattedSundayAtom.reportWrite(value, super.formattedSunday, () {
+      super.formattedSunday = value;
+    });
+  }
+
   late final _$loadPageAsyncAction =
       AsyncAction('_OrdersPageStore.loadPage', context: context);
 
@@ -129,6 +193,14 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
     return _$completeOrdersAsyncAction.run(() => super.completeOrders());
   }
 
+  late final _$updateWeeksAsyncAction =
+      AsyncAction('_OrdersPageStore.updateWeeks', context: context);
+
+  @override
+  Future<void> updateWeeks() {
+    return _$updateWeeksAsyncAction.run(() => super.updateWeeks());
+  }
+
   late final _$onSchoolChangedAsyncAction =
       AsyncAction('_OrdersPageStore.onSchoolChanged', context: context);
 
@@ -138,6 +210,14 @@ mixin _$OrdersPageStore on _OrdersPageStore, Store {
         .run(() => super.onSchoolChanged(newSchool));
   }
 
+  late final _$onWeekChangedAsyncAction =
+      AsyncAction('_OrdersPageStore.onWeekChanged', context: context);
+
+  @override
+  Future<void> onWeekChanged(String newWeek) {
+    return _$onWeekChangedAsyncAction.run(() => super.onWeekChanged(newWeek));
+  }
+
   @override
   String toString() {
     return '''
@@ -145,8 +225,12 @@ isLoading: ${isLoading},
 ordersList: ${ordersList},
 schools: ${schools},
 selectedSchool: ${selectedSchool},
+selectedWeek: ${selectedWeek},
 studentName: ${studentName},
-timestamp: ${timestamp}
+timestamp: ${timestamp},
+orderTimestamp: ${orderTimestamp},
+weeks: ${weeks},
+formattedSunday: ${formattedSunday}
     ''';
   }
 }

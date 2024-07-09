@@ -109,9 +109,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               ),
                                             ),
                                             Text(
-                                              'Date ordered: ${pageStore.timestamp.toString()}',
-                                            ),
-                                            Text(
                                               'Email: ${pageStore.studentModel!.email}',
                                             ),
                                             Text(

@@ -41,6 +41,22 @@ mixin _$CompletedOrdersPageStore on _CompletedOrdersPageStore, Store {
     });
   }
 
+  late final _$timestampAtom =
+      Atom(name: '_CompletedOrdersPageStore.timestamp', context: context);
+
+  @override
+  DateTime? get timestamp {
+    _$timestampAtom.reportRead();
+    return super.timestamp;
+  }
+
+  @override
+  set timestamp(DateTime? value) {
+    _$timestampAtom.reportWrite(value, super.timestamp, () {
+      super.timestamp = value;
+    });
+  }
+
   late final _$loadPageAsyncAction =
       AsyncAction('_CompletedOrdersPageStore.loadPage', context: context);
 
@@ -53,7 +69,8 @@ mixin _$CompletedOrdersPageStore on _CompletedOrdersPageStore, Store {
   String toString() {
     return '''
 isLoading: ${isLoading},
-ordersList: ${ordersList}
+ordersList: ${ordersList},
+timestamp: ${timestamp}
     ''';
   }
 }

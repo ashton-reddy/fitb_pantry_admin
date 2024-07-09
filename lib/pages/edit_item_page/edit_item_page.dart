@@ -1,39 +1,42 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:fitbadmin/main.dart';
-import 'package:fitbadmin/pages/add_category_page/add_category_page_store.dart';
 import 'package:fitbadmin/pages/add_item_page/add_item_page_store.dart';
-import 'package:fitbadmin/pages/add_school_page/add_school_page_store.dart';
 import 'package:fitbadmin/routing/app_router.dart';
 import 'package:fitbadmin/widgets/logo_header.dart';
 import 'package:fitbadmin/widgets/not_permitted_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fitbadmin/models/item_model/item_model.dart';
+import 'package:fitbadmin/pages/edit_item_page/edit_item_page_store.dart';
 
 @RoutePage()
-class AddSchoolPage extends StatefulWidget {
-  const AddSchoolPage({Key? key}) : super(key: key);
+class EditItemPage extends StatefulWidget {
+  final ItemModel item;
+
+  const EditItemPage({Key? key, required this.item}) : super(key: key);
 
   @override
-  State<AddSchoolPage> createState() => _AddSchoolPageState();
+  State<EditItemPage> createState() => _EditItemPageState();
 }
 
-class _AddSchoolPageState extends State<AddSchoolPage> {
-  final AddSchoolPageStore pageStore = AddSchoolPageStore();
+class _EditItemPageState extends State<EditItemPage> {
+  late EditItemPageStore pageStore;
 
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController groupController = TextEditingController();
+  final TextEditingController labelController = TextEditingController();
+  final TextEditingController imageController = TextEditingController();
 
-  final TextEditingController openDateController = TextEditingController();
-  final TextEditingController closeDateController = TextEditingController();
-
-  final TextEditingController emailController = TextEditingController();
+  dynamic selectedGroup;
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    pageStore = EditItemPageStore(widget.item, AddItemPageStore());
     pageStore.loadPage();
     super.initState();
+
+    labelController.text = widget.item.label ?? '';
   }
 
   @override
@@ -63,7 +66,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                           child: Column(
                             children: [
                               const Text(
-                                'Add School',
+                                'Edit Item',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
@@ -74,80 +77,101 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                 height: 32,
                               ),
                               TextFormField(
-                                controller: nameController,
+                                controller: labelController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'Name',
+                                  hintText: 'Label',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
                               ),
                               const SizedBox(
-                                height: 32,
+                                height: 16,
                               ),
-                              TextFormField(
-                                controller: openDateController,
+                              DropdownButtonFormField(
+                                items: pageStore.groupsList,
+                                onChanged: (groupValue) {
+                                  setState(() {
+                                    selectedGroup = groupValue;
+                                    groupController.text = groupValue;
+                                  });
+                                },
+                                value: selectedGroup,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  hintText: 'Open Date',
+                                  hintText: 'Select a category',
                                   fillColor: const Color(0xfff2f4fa),
                                   filled: true,
                                 ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
+                                isExpanded: false,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                elevation: 16,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'required field';
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(
-                                height: 32,
+                                height: 16,
                               ),
-                              TextFormField(
-                                controller: closeDateController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await pageStore.imagePicker();
+                                    await pageStore
+                                        .uploadImage(labelController.text);
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    height: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    child: pageStore.imageUrl.isEmpty
+                                        ? const Icon(Icons.add)
+                                        : Image.memory(
+                                            pageStore.bytesFromPicker!),
                                   ),
-                                  hintText: 'Close Date',
-                                  fillColor: const Color(0xfff2f4fa),
-                                  filled: true,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 32,
-                              ),
-                              TextFormField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  hintText: 'Email',
-                                  fillColor: const Color(0xfff2f4fa),
-                                  filled: true,
                                 ),
                               ),
                               const SizedBox(
-                                height: 32,
+                                height: 48,
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  await pageStore.saveSchools(
-                                      nameController.text,
-                                      int.parse(openDateController.text),
-                                      int.parse(closeDateController.text),
-                                      emailController.text);
-                                  Future.delayed(Duration.zero, () {
-                                    if (context.mounted) {
-                                      context.router
-                                          .replace(const SchoolsRoute());
+                                  try {
+                                    if (pageStore.imageUrl.isEmpty) {
+                                      await pageStore.saveItems(
+                                        widget.item.group,
+                                        widget.item.image,
+                                        widget.item.label,
+                                      );
+                                    } else {
+                                      await pageStore.saveItems(
+                                        selectedGroup,
+                                        pageStore.imageUrl,
+                                        labelController.text,
+                                      );
                                     }
-                                  });
+                                    // Delayed navigation to ensure all async operations are complete
+                                    Future.delayed(Duration.zero, () {
+                                      if (context.mounted) {
+                                        context.router
+                                            .replace(const ItemsRoute());
+                                      }
+                                    });
+                                  } catch (e) {
+                                    print('Error saving item: $e');
+                                    // Handle error gracefully, e.g., show error message or retry logic
+                                  }
                                 },
                                 child: Container(
                                   constraints:
@@ -164,7 +188,7 @@ class _AddSchoolPageState extends State<AddSchoolPage> {
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      'Add School',
+                                      'Done',
                                       style: TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.w700,
