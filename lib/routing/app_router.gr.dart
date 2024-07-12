@@ -69,6 +69,12 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    EmailSenderRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EmailSenderPage(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -276,6 +282,20 @@ class EditSchoolRouteArgs {
   String toString() {
     return 'EditSchoolRouteArgs{key: $key, school: $school}';
   }
+}
+
+/// generated route for
+/// [EmailSenderPage]
+class EmailSenderRoute extends PageRouteInfo<void> {
+  const EmailSenderRoute({List<PageRouteInfo>? children})
+      : super(
+          EmailSenderRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EmailSenderRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

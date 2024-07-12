@@ -17,6 +17,7 @@ import 'package:fitbadmin/models/category_model/category_model.dart';
 import 'package:fitbadmin/models/school_model/school_model.dart';
 import 'package:fitbadmin/pages/edit_item_page/edit_item_page.dart';
 import 'package:fitbadmin/models/item_model/item_model.dart';
+import 'package:fitbadmin/pages/email_sender_page/email_sender_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -54,6 +55,7 @@ class AppRouter extends _$AppRouter {
         ),
         AutoRoute(page: EditSchoolRoute.page),
         AutoRoute(page: EditCategoryRoute.page),
-        AutoRoute(page: EditItemRoute.page)
+        AutoRoute(page: EditItemRoute.page),
+        AutoRoute(page: EmailSenderRoute.page)
       ];
 }

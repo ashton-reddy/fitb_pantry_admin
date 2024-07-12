@@ -24,6 +24,10 @@ class SettingsPage extends StatelessWidget {
             title: 'Schools',
             route: SchoolsRoute(),
           ),
+          SettingItem(
+            title: 'Email Sender',
+            route: EmailSenderRoute(),
+          ),
         ],
       ),
     );
